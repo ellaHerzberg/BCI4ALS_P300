@@ -1,23 +1,19 @@
-import datetime
 import os
 import pickle
-import random
 import sys
 import time
 from tkinter import messagebox
-from tkinter.filedialog import askdirectory
 from typing import Dict, List, Any
-import numpy as np
 import pandas as pd
-from .experiment import Experiment
-from bci4als.eeg import EEG
+from scripts.bci4als_code.experiments.experiment import Experiment
+from scripts.bci4als_code.eeg import EEG
 from playsound import playsound
 from psychopy import visual
 
 
 class OfflineExperiment(Experiment):
 
-    def __init__(self, eeg: EEG, num_trials: int, trial_length: float,
+    def __init__(self, eeg: EEG, num_trials: int, stim_length: float,
                  next_length: float = 1, cue_length: float = 0.25, ready_length: float = 1,
                  full_screen: bool = False, audio: bool = False, classes: tuple = (0,1,2,3,4)):
 
@@ -29,9 +25,9 @@ class OfflineExperiment(Experiment):
 
         # trial times
         self.cue_length: float = cue_length
-        self.next_length: float = next_length  # TODO:not needed
+        self.next_length: float = next_length
         self.ready_length: float = ready_length
-        self.trial_length: float = trial_length
+        self.stim_length: float = stim_length
 
         # paths
         self.subject_directory: str = ''
@@ -66,7 +62,7 @@ class OfflineExperiment(Experiment):
         self.window_params = {'main_window': main_window, 'right': right_stim, 'left': left_stim,
                               'idle': idle_stim, 'tongue': tongue_stim, 'legs': legs_stim}
 
-    def _user_messages(self, trial_index):
+    def _user_messages(self, trial_index, stim_index):
         # TODO: not necessary for every stim - just at the beginning
         """
         Show for the user messages in the following order:
@@ -79,11 +75,11 @@ class OfflineExperiment(Experiment):
 
         color = self.visual_params['text_color']
         height = self.visual_params['text_height']
-        trial_image = self.enum_image[self.labels[trial_index]]
+        trial_image = self.enum_image[self.labels[trial_index][stim_index]]
         win = self.window_params['main_window']
 
         # Show 'next' message TODO:need just at the beginning
-        next_message = visual.TextStim(win, 'The next stimulus is...', color=color, height=height)
+        next_message = visual.TextStim(win, 'The target is...', color=color, height=height)
         next_message.draw()
         win.flip()
 
@@ -101,15 +97,15 @@ class OfflineExperiment(Experiment):
             playsound(self.audio_path[trial_image])
 
         # Show ready & state message - TODO: no need
-        state_text = 'Trial: {} / {}'.format(trial_index + 1, self.num_trials)
-        state_message = visual.TextStim(win, state_text, pos=[0, -250], color=color, height=height)
-        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
-        ready_message.draw()
-        state_message.draw()
-        win.flip()
-        time.sleep(self.ready_length)
+        # state_text = 'Trial: {} / {}'.format(trial_index + 1, self.num_trials)
+        # state_message = visual.TextStim(win, state_text, pos=[0, -250], color=color, height=height)
+        # ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
+        # ready_message.draw()
+        # state_message.draw()
+        # win.flip()
+        # time.sleep(self.ready_length)
 
-    def _show_stimulus(self, trial_index):
+    def _show_stimulus(self, trial_index, stim_index):
         """
         Show the current condition on screen and wait.
         Additionally response to shutdown key.
@@ -119,21 +115,21 @@ class OfflineExperiment(Experiment):
 
         # Params
         win = self.window_params['main_window']
-        trial_img = self.enum_image[self.labels[trial_index]]
+        trial_img = self.enum_image[self.labels[trial_index][stim_index]]
         audio_path = os.path.join(os.path.dirname(__file__), 'audio', '{}.mp3')
 
         # Play start sound
         if self.audio:
             playsound(audio_path.format('start'))
 
-        # Draw and push marker
-        self.eeg.insert_marker(status='start', label=self.labels[trial_index], index=trial_index)
+        # Draw and push marker TODO: make it work for 2 dimentional lables
+        self.eeg.insert_marker(status='start', label=self.labels[trial_index][stim_index], index=trial_index)
         self.window_params[trial_img].draw()
         win.flip()
 
         # Wait
-        time.sleep(self.trial_length)
-        self.eeg.insert_marker(status='stop', label=self.labels[trial_index], index=trial_index)
+        time.sleep(self.stim_length)
+        self.eeg.insert_marker(status='stop', label=self.labels[trial_index][stim_index], index=trial_index)
 
         # Play end sound
         if self.audio:
@@ -207,11 +203,11 @@ class OfflineExperiment(Experiment):
         print(f"Running {self.num_trials} trials")
         # Run trials
         for i in range(self.num_trials):
-            # Messages for user TODO: move up
-            self._user_messages(i)
-
-            # Show stim on window
-            self._show_stimulus(i)
+            # Messages for user
+            self._user_messages(i, 0)  # TODO: 0 need to be the target for this trial
+            for j in range(self.num_stims):
+                # Show stim on window
+                self._show_stimulus(i, j)
 
         # Export and return the data
         trials = self._extract_trials()

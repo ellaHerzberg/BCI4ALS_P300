@@ -8,14 +8,15 @@ from tkinter.filedialog import askdirectory
 import brainflow
 import numpy as np
 
-from bci4als.eeg import EEG
-from bci4als.experiments.feedback import Feedback
+from scripts.bci4als_code.eeg import EEG
+from scripts.bci4als_code.experiments.feedback import Feedback
 from psychopy import event
 
 
 class Experiment:
-    def __init__(self, eeg, num_trials, classes):
+    def __init__(self, eeg, num_trials, classes, num_stims=100):
         self.num_trials: int = num_trials
+        self.num_stims: int = num_stims
         self.eeg: EEG = eeg
 
         if self.eeg.board_id == brainflow.BoardIds.SYNTHETIC_BOARD:
@@ -25,7 +26,7 @@ class Experiment:
             self.debug = False
         # override in subclass
         self.cue_length = None
-        self.trial_length = None
+        self.stim_length = None
         self.session_directory = None
         self.enum_image = {0: 'right', 1: 'left', 2: 'idle', 3: 'tongue', 4: 'legs'}
         self.experiment_type = None
@@ -57,7 +58,7 @@ class Experiment:
             file.write('***************\n')
             file.write(f'Experiment Type: {self.experiment_type}\n')
             file.write(f'Num of trials: {self.num_trials}\n')
-            file.write(f'Trials length: {self.trial_length}\n')
+            file.write(f'Trials length: {self.stim_length}\n')
             file.write(f'Cue length: {self.cue_length}\n')
             file.write(f'Labels Enum: {self.enum_image}\n')
             file.write(f'Skip After: {self.skip_after}\n')
@@ -144,16 +145,28 @@ class Experiment:
         return session_folder
 
     def _init_labels(self, keys):
+        # TODO: balance to P300 method
         """
         This method creates dict containing a stimulus vector
         :return: the stimulus in each trial (list)
         """
 
         # Create the balance label vector
-        for i in keys:
-            self.labels += [i] * (self.num_trials // len(keys))
+        # 14% for target_1, 14% for target_2 and 72% for idle
+        for j in range(self.num_trials):
+            temp = []
+            for i in keys:
+                # idle mode
+                if i == 2:
+                    temp += [i] * int(self.num_stims * 0.72)
+                # target mode
+                else:
+                    temp += [i] * int(self.num_stims * 0.14)
+            self.labels += [temp]
+
+            # TODO: what is this
         self.labels += list(np.random.choice(list(keys),
-                                             size=self.num_trials % len(keys),
+                                             size=self.num_stims % len(keys),
                                              replace=True))
 
         random.shuffle(self.labels)
