@@ -1,5 +1,6 @@
 import os
 import pickle
+import random
 import sys
 import time
 from tkinter import messagebox
@@ -9,6 +10,7 @@ from scripts.bci4als_code.experiments.experiment import Experiment
 from scripts.bci4als_code.eeg import EEG
 from playsound import playsound
 from psychopy import visual
+
 
 
 class OfflineExperiment(Experiment):
@@ -76,10 +78,11 @@ class OfflineExperiment(Experiment):
 
         color = self.visual_params['text_color']
         height = self.visual_params['text_height']
-        trial_image = self.enum_image[self.labels[trial_index][stim_index]]
+        target = random.randint(0, 1)
+        trial_image = self.enum_image[target]
         win = self.window_params['main_window']
 
-        # Show 'next' message TODO:need just at the beginning
+        # Show 'next' message
         next_message = visual.TextStim(win, 'The target is...', color=color, height=height)
         next_message.draw()
         win.flip()

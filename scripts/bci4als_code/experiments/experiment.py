@@ -6,7 +6,6 @@ from tkinter import messagebox
 from tkinter.filedialog import askdirectory
 
 import brainflow
-import numpy as np
 
 from scripts.bci4als_code.eeg import EEG
 from scripts.bci4als_code.experiments.feedback import Feedback
