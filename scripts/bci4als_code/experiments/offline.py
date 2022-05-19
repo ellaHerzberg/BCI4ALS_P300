@@ -132,6 +132,11 @@ class OfflineExperiment(Experiment):
         time.sleep(self.stim_length)
         self.eeg.insert_marker(status='stop', label=self.labels[trial_index][stim_index], index=trial_index)
 
+        # make black between stims
+        win = self.window_params['main_window']
+        win.flip()
+        time.sleep(0.1)
+
         # Play end sound
         if self.audio:
             playsound(audio_path.format('end'))
