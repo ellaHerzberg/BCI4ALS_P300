@@ -9,8 +9,8 @@ def offline_experiment():
     CYTON_DAISY = 2
     eeg = EEG(board_id=SYNTHETIC_BOARD)
 
-    exp = OfflineExperiment(eeg=eeg, num_trials=5, stim_length=0.5, cue_length=1.5,
-                            full_screen=True, audio=False)
+    exp = OfflineExperiment(eeg=eeg, num_trials=2, stim_length=0.25, cue_length=1.5,
+                            full_screen=True, audio=False, num_stims = 10)
 
     trials, labels = exp.run()
 

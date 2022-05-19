@@ -47,7 +47,7 @@ class EEG:
 
         self.configurations = 'x1030110Xx2030110Xx3030110Xx4030110Xx5030110Xx6030110Xx7030110Xx8030110Xx9030110Xx10030110Xx11030110Xx12030110Xx13131000Xx14131000Xx15131000Xx16131000X'
 
-    def extract_trials(self, data: NDArray) -> [List[Tuple], List[int]]:
+    def extract_trials(self, data: NDArray, num_stims, num_trials) -> [List[Tuple], List[List]]:
         """
         The method get ndarray and extract the labels and durations from the data.
         :param data: the data from the board.
@@ -75,6 +75,7 @@ class EEG:
 
                 durations[-1] += (idx,)
 
+        labels = [labels[x:x+num_stims] for x in range(0, num_stims*num_trials, num_stims)]
         return durations, labels
 
     def on(self):

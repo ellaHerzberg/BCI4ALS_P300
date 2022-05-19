@@ -36,6 +36,9 @@ class Experiment:
         self.labels = []
         self._init_labels(keys=classes)
 
+        if num_stims < 10:
+            raise IOError("num_stims must be greater then 10")
+
     def run(self):
         pass
 
@@ -154,19 +157,12 @@ class Experiment:
         # Create the balance label vector
         # 14% for target_1, 14% for target_2 and 72% for idle
         for j in range(self.num_trials):
-            temp = []
-            for i in keys:
-                # idle mode
-                if i == 2:
-                    temp += [i] * int(self.num_stims * 0.72)
-                # target mode
-                else:
-                    temp += [i] * int(self.num_stims * 0.14)
+            # idle mode
+            temp = [2] * self.num_stims
+            # target modes
+            percent = int(self.num_stims * 0.14)
+            temp[0:percent] = [0]*percent
+            temp[percent:2*percent] = [1]*percent
+
+            random.shuffle(temp)
             self.labels += [temp]
-
-            # TODO: what is this
-        self.labels += list(np.random.choice(list(keys),
-                                             size=self.num_stims % len(keys),
-                                             replace=True))
-
-        random.shuffle(self.labels)

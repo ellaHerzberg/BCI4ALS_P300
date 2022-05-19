@@ -15,9 +15,10 @@ class OfflineExperiment(Experiment):
 
     def __init__(self, eeg: EEG, num_trials: int, stim_length: float,
                  next_length: float = 1, cue_length: float = 0.25, ready_length: float = 1,
-                 full_screen: bool = False, audio: bool = False, classes: tuple = (0,1,2,3,4)):
+                 full_screen: bool = False, audio: bool = False, classes: tuple = (0,1,2),
+                 num_stims = 100):
 
-        super().__init__(eeg, num_trials, classes)
+        super().__init__(eeg, num_trials, classes, num_stims)
         self.experiment_type = "Offline"
         self.window_params: Dict[str, Any] = {}
         self.full_screen: bool = full_screen
@@ -99,11 +100,11 @@ class OfflineExperiment(Experiment):
         # Show ready & state message - TODO: no need
         # state_text = 'Trial: {} / {}'.format(trial_index + 1, self.num_trials)
         # state_message = visual.TextStim(win, state_text, pos=[0, -250], color=color, height=height)
-        # ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
-        # ready_message.draw()
+        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
+        ready_message.draw()
         # state_message.draw()
-        # win.flip()
-        # time.sleep(self.ready_length)
+        win.flip()
+        time.sleep(self.ready_length)
 
     def _show_stimulus(self, trial_index, stim_index):
         """
@@ -122,7 +123,7 @@ class OfflineExperiment(Experiment):
         if self.audio:
             playsound(audio_path.format('start'))
 
-        # Draw and push marker TODO: make it work for 2 dimentional lables
+        # Draw and push marker
         self.eeg.insert_marker(status='start', label=self.labels[trial_index][stim_index], index=trial_index)
         self.window_params[trial_img].draw()
         win.flip()
@@ -154,8 +155,11 @@ class OfflineExperiment(Experiment):
         data = self.eeg.get_board_data()
         ch_names = self.eeg.get_board_names()
         ch_channels = self.eeg.get_board_channels()
-        durations, labels = self.eeg.extract_trials(data)
+        durations, labels = self.eeg.extract_trials(data, self.num_stims, self.num_trials)
 
+        print(labels)
+        print("\n")
+        print(self.labels)
         # Assert the labels
         assert self.labels == labels, 'The labels are not equals to the extracted labels'
 
