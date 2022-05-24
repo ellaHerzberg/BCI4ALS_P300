@@ -2,6 +2,7 @@ from scipy.signal import lfilter, butter
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+from pandas import read_csv
 
 
 fs = 256  # (Hz)
@@ -19,8 +20,14 @@ highcut = 40
 with open("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\trials.pickle", "rb") as f:
     trials = pickle.load(f)
 
-labels = np.genfromtxt("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv", delimiter=',')
-
+# data_labels = open("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv")
+# labels = []
+# for row in data_labels:
+#     labels.append(row)
+# labels = np.genfromtxt("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv"
+#                        ,delimiter=",")
+labels = np.loadtxt("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv",
+                  delimiter=",")
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -37,12 +44,12 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 
 
 times = np.arange(256)
-filtered = butter_bandpass_filter(trials, lowcut, highcut, fs, order=2)
+# filtered = butter_bandpass_filter(trials, lowcut, highcut, fs, order=2)
 plt.subplot(121)
-plt.plot(times, trials[1, 1, :, 1])
+plt.plot(times, trials[1, 1, 1, :])
 plt.xlabel('before')
 plt.subplot(122)
-plt.plot(times, filtered[1, 1, :, 1])
+# plt.plot(times, filtered[1, 1, :, 1])
 plt.xlabel('after')
 plt.show()
 

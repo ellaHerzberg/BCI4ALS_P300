@@ -5,6 +5,8 @@ import sys
 import time
 from tkinter import messagebox
 from typing import Dict, List, Any
+
+import numpy as np
 import pandas as pd
 from scripts.bci4als_code.experiments.experiment import Experiment
 from scripts.bci4als_code.eeg import EEG
@@ -192,7 +194,11 @@ class OfflineExperiment(Experiment):
         # Save the labels as csv file
         labels_path = os.path.join(self.session_directory, 'labels.csv')
         print(f"Saving labels to {labels_path}")
-        pd.DataFrame.from_dict({'name': self.labels}).to_csv(labels_path, index=False, header=False)
+        print(self.labels)
+        self.labels = np.array(self.labels)
+        # pd.DataFrame.from_dict({'name': self.labels}).to_csv(labels_path, index=False, header=False)
+        self.labels.tofile(labels_path, sep=',')
+        print(self.labels)
 
     def run(self):
         # Init the current experiment folder
