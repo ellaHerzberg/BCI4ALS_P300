@@ -12,13 +12,12 @@ from playsound import playsound
 from psychopy import visual
 
 
-
 class OfflineExperiment(Experiment):
 
     def __init__(self, eeg: EEG, num_trials: int, stim_length: float,
                  next_length: float = 1, cue_length: float = 0.25, ready_length: float = 1,
-                 full_screen: bool = False, audio: bool = False, classes: tuple = (0,1,2),
-                 num_stims = 100):
+                 full_screen: bool = False, audio: bool = False, classes: tuple = (0, 1, 2),
+                 num_stims=100):
 
         super().__init__(eeg, num_trials, classes, num_stims)
         self.experiment_type = "Offline"
@@ -165,16 +164,17 @@ class OfflineExperiment(Experiment):
         ch_channels = self.eeg.get_board_channels()
         durations, labels = self.eeg.extract_trials(data, self.num_stims, self.num_trials)
 
-        print(labels)
-        print("\n")
-        print(self.labels)
         # Assert the labels
         assert self.labels == labels, 'The labels are not equals to the extracted labels'
 
+        durations = [durations[x:x+self.num_stims] for x in range(0, len(durations), self.num_stims)]
         # Append each
-        for start, end in durations:
-            trial = data[ch_channels, start:end]
-            trials.append(pd.DataFrame(data=trial.T, columns=ch_names))
+        for duration in durations:
+            trial = []
+            for start, end in duration:
+                stim = data[ch_channels, start:end]
+                trial.append(stim)
+            trials.append(trial)
 
         return trials
 
