@@ -1,4 +1,4 @@
-Experiment datetime: 2022-05-24 12:16:03.175515
+Experiment datetime: 2022-05-24 12:19:09.482292
 
 EEG Channels:
 *************
