@@ -53,6 +53,7 @@ plt.subplot(122)
 plt.xlabel('after')
 plt.show()
 
+# divide the data per trail per stimuli and calculate mean per stimuli
 mean_trails = np.zeros((trials_amount, elec, fs, labels_amount))
 for i in range(trials_amount):
     for j in range(labels_amount):
