@@ -66,7 +66,7 @@ class OfflineExperiment(Experiment):
         self.window_params = {'main_window': main_window, 'right': right_stim, 'left': left_stim,
                               'idle': idle_stim, 'tongue': tongue_stim, 'legs': legs_stim}
 
-    def _user_messages(self, trial_index, stim_index):
+    def _user_messages(self, target):
         # TODO: not necessary for every stim - just at the beginning
         """
         Show for the user messages in the following order:
@@ -79,7 +79,6 @@ class OfflineExperiment(Experiment):
 
         color = self.visual_params['text_color']
         height = self.visual_params['text_height']
-        target = random.randint(0, 1)
         trial_image = self.enum_image[target]
         win = self.window_params['main_window']
 
@@ -162,7 +161,7 @@ class OfflineExperiment(Experiment):
         # Extract the data
         trials = []
         data = self.eeg.get_board_data()
-        ch_names = self.eeg.get_board_names()
+        # ch_names = self.eeg.get_board_names()
         ch_channels = self.eeg.get_board_channels()
         durations, labels = self.eeg.extract_trials(data, self.num_stims, self.num_trials)
 
@@ -191,14 +190,16 @@ class OfflineExperiment(Experiment):
         print(f"Dumping extracted trials recordings to {trials_path}")
         pickle.dump(trials, open(trials_path, 'wb'))
 
-        # Save the labels as csv file
-        labels_path = os.path.join(self.session_directory, 'labels.csv')
+        # Save the labels as pickle file
+        labels_path = os.path.join(self.session_directory, 'labels.pickle')
         print(f"Saving labels to {labels_path}")
-        print(self.labels)
-        self.labels = np.array(self.labels)
-        # pd.DataFrame.from_dict({'name': self.labels}).to_csv(labels_path, index=False, header=False)
-        self.labels.tofile(labels_path, sep=',')
-        print(self.labels)
+        pickle.dump(self.labels, open(labels_path, 'wb'))
+
+        # Save the labels as pickle file
+        targets_path = os.path.join(self.session_directory, 'targets.pickle')
+        print(f"Saving targets to {targets_path}")
+        pickle.dump(self.targets, open(targets_path, 'wb'))
+
 
     def run(self):
         # Init the current experiment folder
@@ -220,12 +221,13 @@ class OfflineExperiment(Experiment):
 
         print(f"Running {self.num_trials} trials")
         # Run trials
-        for i in range(self.num_trials):
+        for t in range(self.num_trials):
             # Messages for user
-            self._user_messages(i, 0)  # TODO: 0 need to be the target for this trial
-            for j in range(self.num_stims):
+            target = self.targets[t]
+            self._user_messages(target)
+            for s in range(self.num_stims):
                 # Show stim on window
-                self._show_stimulus(i, j)
+                self._show_stimulus(t, s)
 
         # Export and return the data
         trials = self._extract_trials()

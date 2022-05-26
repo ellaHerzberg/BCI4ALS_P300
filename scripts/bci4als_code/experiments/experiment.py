@@ -33,7 +33,9 @@ class Experiment:
 
         #     labels
         self.labels = []
+        self.targets = []
         self._init_labels(keys=classes)
+        self._init_targets()
 
         if num_stims < 10:
             raise IOError("num_stims must be greater then 10")
@@ -147,21 +149,34 @@ class Experiment:
         return session_folder
 
     def _init_labels(self, keys):
-        # TODO: balance to P300 method
         """
-        This method creates dict containing a stimulus vector
+        This method creates list containing a stimulus vector
         :return: the stimulus in each trial (list)
         """
 
         # Create the balance label vector
         # 14% for target_1, 14% for target_2 and 72% for idle
+        idle = keys[2]
+        target1 = keys[0]
+        target2 = keys[1]
         for j in range(self.num_trials):
             # idle mode
-            temp = [2] * self.num_stims
+            temp = [idle] * self.num_stims
             # target modes
             percent = int(self.num_stims * 0.14)
-            temp[0:percent] = [0]*percent
-            temp[percent:2*percent] = [1]*percent
+            temp[0:percent] = [target1]*percent
+            temp[percent:2*percent] = [target2]*percent
 
             random.shuffle(temp)
+
             self.labels += [temp]
+
+    def _init_targets(self):
+        """
+        this method creates a list of targets - 0 or 1
+        :return: list of targets
+        """
+        # randomly choose the target for the trail
+
+        targets = [random.randint(0,1) for i in range(self.num_trials)]
+        self.targets = targets
