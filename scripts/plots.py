@@ -17,7 +17,7 @@ fs = 256  # (Hz)
 lowcut = 1
 highcut = 40
 
-with open("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\trials.pickle", "rb") as f:
+with open("..\\recordings\\23\\trials.pickle", "rb") as f:
     trials = pickle.load(f)
 
 # data_labels = open("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv")
@@ -26,7 +26,7 @@ with open("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BC
 #     labels.append(row)
 # labels = np.genfromtxt("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv"
 #                        ,delimiter=",")
-labels = np.loadtxt("D:\\University\\Bachelor\\Brain and Cognition science\\Third year\\BCI4ALS\\BCI4ALS_P300\\recordings\\23\\labels.csv",
+labels = np.loadtxt("..\\recordings\\23\\labels.csv",
                   delimiter=",")
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
