@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pickle
 from pandas import read_csv
 
-
 fs = 256  # (Hz)
 # elec = 13
 # trials_amount = 15
@@ -25,6 +24,10 @@ with open("..\\recordings\\34\\labels.pickle", "rb") as f:
 with open("..\\recordings\\34\\targets.pickle", "rb") as f:
     targets = pickle.load(f)
 
+#  option for filter function from mne
+# and we already have a function that do so in th eeg.py -> fulter_data
+data = trials[0]
+data.filter(l_freq=low_pass, h_freq=high_pass, verbose=False)
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):

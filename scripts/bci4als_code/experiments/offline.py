@@ -5,8 +5,6 @@ import sys
 import time
 from tkinter import messagebox
 from typing import Dict, List, Any
-
-import numpy as np
 import pandas as pd
 from scripts.bci4als_code.experiments.experiment import Experiment
 from scripts.bci4als_code.eeg import EEG
@@ -39,9 +37,7 @@ class OfflineExperiment(Experiment):
         self.images_path: Dict[str, str] = {
             'right': os.path.join(os.path.dirname(__file__), 'images', 'arrow_right.jpeg'),
             'left': os.path.join(os.path.dirname(__file__), 'images', 'arrow_left.jpeg'),
-            'idle': os.path.join(os.path.dirname(__file__), 'images', 'square.jpeg'),
-            'tongue': os.path.join(os.path.dirname(__file__), 'images', 'tongue.jpeg'),
-            'legs': os.path.join(os.path.dirname(__file__), 'images', 'legs.jpeg')}
+            'idle': os.path.join(os.path.dirname(__file__), 'images', 'square.jpeg'), }
         self.audio_path: Dict[str, str] = {label: os.path.join(os.path.dirname(__file__), 'audio', f'{label}.mp3')
                                            for label in self.enum_image.values()}
         self.audio_success_path = os.path.join(os.path.dirname(__file__), 'audio', f'success.mp3')
@@ -54,26 +50,24 @@ class OfflineExperiment(Experiment):
         """
 
         # Create the main window
-        main_window = visual.Window(monitor='testMonitor', units='pix', color='black', fullscr=self.full_screen)
+        main_window = visual.Window(monitor='testMonitor', units='pix',
+                                    color='black', fullscr=self.full_screen)
 
         # Create stimulus
         right_stim = visual.ImageStim(main_window, image=self.images_path['right'])
         left_stim = visual.ImageStim(main_window, image=self.images_path['left'])
         idle_stim = visual.ImageStim(main_window, image=self.images_path['idle'])
-        tongue_stim = visual.ImageStim(main_window, image=self.images_path['tongue'])
-        legs_stim = visual.ImageStim(main_window, image=self.images_path['legs'])
 
-        self.window_params = {'main_window': main_window, 'right': right_stim, 'left': left_stim,
-                              'idle': idle_stim, 'tongue': tongue_stim, 'legs': legs_stim}
+        self.window_params = {'main_window': main_window, 'right': right_stim,
+                              'left': left_stim, 'idle': idle_stim}
 
     def _user_messages(self, target):
-        # TODO: not necessary for every stim - just at the beginning
         """
         Show for the user messages in the following order:
             1. Next message
             2. Cue for the trial condition
             3. Ready & state message
-        :param trial_index: the index of the current trial
+        :param target: the current target of the trail
         :return:
         """
 
@@ -100,12 +94,9 @@ class OfflineExperiment(Experiment):
         if self.audio:
             playsound(self.audio_path[trial_image])
 
-        # Show ready & state message - TODO: no need
-        # state_text = 'Trial: {} / {}'.format(trial_index + 1, self.num_trials)
-        # state_message = visual.TextStim(win, state_text, pos=[0, -250], color=color, height=height)
+        # Show ready message
         ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
         ready_message.draw()
-        # state_message.draw()
         win.flip()
         time.sleep(self.ready_length)
 
@@ -114,7 +105,7 @@ class OfflineExperiment(Experiment):
         Show the current condition on screen and wait.
         Additionally response to shutdown key.
         :param trial_index: the current trial index
-        :return:
+        :param stim_index: the current stim in index
         """
 
         # Params
@@ -135,7 +126,7 @@ class OfflineExperiment(Experiment):
         time.sleep(self.stim_length)
         self.eeg.insert_marker(status='stop', label=self.labels[trial_index][stim_index], index=trial_index)
 
-        # make black between stims
+        # make blink between stimulus
         win = self.window_params['main_window']
         win.flip()
         time.sleep(0.1)
@@ -148,11 +139,11 @@ class OfflineExperiment(Experiment):
         if 'escape' == self.get_keypress():
             sys.exit(-1)
 
-    def _extract_trials(self) -> List[pd.DataFrame]:
+    def _extract_trials(self) -> List[List]:
         """
         The method extract from the offline experiment collected EEG data and split it into trials.
         The method export a pickle file to the subject directory with a list with all the trials.
-        :return: list of trials where each trial is a pandas DataFrame
+        :return: list of trials where each trial is a List DataFrame
         """
 
         # Wait for a sec to the OpenBCI to get the last marker
@@ -168,7 +159,7 @@ class OfflineExperiment(Experiment):
         # Assert the labels
         assert self.labels == labels, 'The labels are not equals to the extracted labels'
 
-        durations = [durations[x:x+self.num_stims] for x in range(0, len(durations), self.num_stims)]
+        durations = [durations[x:x + self.num_stims] for x in range(0, len(durations), self.num_stims)]
         # Append each
         for duration in durations:
             trial = []
@@ -183,8 +174,8 @@ class OfflineExperiment(Experiment):
         """
         Export the experiment files (trials & labels)
         :param trials:
-        :return:
         """
+
         # Dump to pickle
         trials_path = os.path.join(self.session_directory, 'trials.pickle')
         print(f"Dumping extracted trials recordings to {trials_path}")
@@ -199,7 +190,6 @@ class OfflineExperiment(Experiment):
         targets_path = os.path.join(self.session_directory, 'targets.pickle')
         print(f"Saving targets to {targets_path}")
         pickle.dump(self.targets, open(targets_path, 'wb'))
-
 
     def run(self):
         # Init the current experiment folder

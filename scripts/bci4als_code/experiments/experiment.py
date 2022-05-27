@@ -27,9 +27,9 @@ class Experiment:
         self.cue_length = None
         self.stim_length = None
         self.session_directory = None
-        self.enum_image = {0: 'right', 1: 'left', 2: 'idle', 3: 'tongue', 4: 'legs'}
+        self.enum_image = {0: 'right', 1: 'left', 2: 'idle'}
         self.experiment_type = None
-        self.skip_after = None
+        # self.skip_after = None
 
         #     labels
         self.labels = []
@@ -62,10 +62,11 @@ class Experiment:
             file.write('***************\n')
             file.write(f'Experiment Type: {self.experiment_type}\n')
             file.write(f'Num of trials: {self.num_trials}\n')
-            file.write(f'Trials length: {self.stim_length}\n')
+            file.write(f'Num of stimulus per trail: {self.num_stims}\n')
+            file.write(f'Single trial length: {self.stim_length*self.num_stims}\n')
             file.write(f'Cue length: {self.cue_length}\n')
             file.write(f'Labels Enum: {self.enum_image}\n')
-            file.write(f'Skip After: {self.skip_after}\n')
+            # file.write(f'Skip After: {self.skip_after}\n')
 
     def _ask_subject_directory(self):
         """
@@ -178,5 +179,5 @@ class Experiment:
         """
         # randomly choose the target for the trail
 
-        targets = [random.randint(0,1) for i in range(self.num_trials)]
+        targets = [random.randint(0, 1) for _ in range(self.num_trials)]
         self.targets = targets
