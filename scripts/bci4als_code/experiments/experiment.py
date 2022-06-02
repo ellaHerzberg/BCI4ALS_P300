@@ -65,6 +65,7 @@ class Experiment:
             file.write(f'Num of stimulus per trail: {self.num_stims}\n')
             file.write(f'Single trial length: {self.stim_length*self.num_stims}\n')
             file.write(f'Cue length: {self.cue_length}\n')
+            file.write(f'Stim length: {self.stim_length}\n')
             file.write(f'Labels Enum: {self.enum_image}\n')
             # file.write(f'Skip After: {self.skip_after}\n')
 
@@ -156,7 +157,7 @@ class Experiment:
         """
 
         # Create the balance label vector
-        # 14% for target_1, 14% for target_2 and 72% for idle
+        # 10% for target_1, 10% for target_2 and 80% for idle
         idle = keys[2]
         target1 = keys[0]
         target2 = keys[1]
@@ -164,7 +165,7 @@ class Experiment:
             # idle mode
             temp = [idle] * self.num_stims
             # target modes
-            percent = int(self.num_stims * 0.14)
+            percent = int(self.num_stims * 0.1)
             temp[0:percent] = [target1]*percent
             temp[percent:2*percent] = [target2]*percent
 

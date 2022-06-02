@@ -2,26 +2,36 @@ from scipy.signal import lfilter, butter
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-from pandas import read_csv
+from creat_epoch_array import *
 
 
+def get_mean_of_stims(data, labels, targets):
+    mean_target_data, mean_distract_data, mean_idle_data = [],[],[]
+    for trial, label, target in zip(data, labels, targets):
+        trial_data = trial
+        if not isinstance(trial, np.ndarray):
+            trial_data = trial.get_data()
+        label_array = np.array(label)
+        target_data = trial_data[label_array==target]
+        idle_data = trial_data[label_array==2]
+        distract_data = trial_data[label_array==(1-target)]
+        mean_target_data.append(np.mean(target_data, axis=0))
+        mean_idle_data.append(np.mean(idle_data, axis=0))
+        mean_distract_data.append(np.mean(distract_data, axis=0))
+    return mean_target_data, mean_distract_data, mean_idle_data
 
-lowcut = 1
-highcut = 40
+
+#  set parameters
+lowcut = 1.
+highcut = 40.
 
 #  get data from files
-with open("..\\recordings\\34\\trials.pickle", "rb") as f:
+with open("..\\recordings\\Elad_02.06\\2\\trials.pickle", "rb") as f:
     trials = pickle.load(f)
-with open("..\\recordings\\34\\labels.pickle", "rb") as f:
+with open("..\\recordings\\Elad_02.06\\2\\labels.pickle", "rb") as f:
     labels = pickle.load(f)
-with open("..\\recordings\\34\\targets.pickle", "rb") as f:
+with open("..\\recordings\\Elad_02.06\\2\\targets.pickle", "rb") as f:
     targets = pickle.load(f)
-
-#  option for filter function from mne
-# and we already have a function that do so in th eeg.py -> fulter_data
-data = trials[0]
-#data.filter(l_freq=low_pass, h_freq=high_pass, verbose=False)#tamar: is this ok? why only on data?
-
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -36,11 +46,36 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-fs = 256  # (Hz)
-elec = len(trials[0][0])
-trials_amount = len(trials)
-stimuli = len(trials[1])
-labels_amount = max(labels[0])+1
+#  filter function from mne
+data = get_epochs_array(trials=trials)
+
+def plot_electrodes(trial, electrod):
+    plt.figure()
+    plt.plot(range(len(trial[electrod])), trial[electrod])
+    plt.xlabel("Time")
+    plt.ylabel("Frequency")
+    plt.show()
+
+
+mean_target_data, mean_distract_data, mean_idle_data = get_mean_of_stims(data, labels, targets)
+
+plot_electrodes(mean_target_data[0], 3)
+plot_electrodes(mean_idle_data[0], 3)
+plot_electrodes(mean_distract_data[0], 3)
+
+trials_filtered = []
+for trial in data:
+    trial.filter(l_freq=lowcut, h_freq=highcut, fir_design='firwin',
+                 skip_by_annotation='edge', verbose=False)
+    # trials_filtered.append(butter_bandpass_filter(trial, lowcut, highcut, 125, order=2))
+# data = trials_filtered
+
+
+# fs = 125  # (Hz)
+# elec = len(trials[0][0])
+# trials_amount = len(trials)
+# stimuli = len(trials[1])
+# labels_amount = max(labels[0])+1
 # trials = np.random.randint(0, 100, (trials_amount, elec, fs * stimuli))
 # labels = np.random.randint(low=0, high=labels_amount, size=(trials_amount, stimuli))
 # trials = np.reshape(trials, (trials_amount, elec, fs, stimuli))
@@ -55,31 +90,29 @@ labels_amount = max(labels[0])+1
 # plt.xlabel('after')
 # plt.show()
 
-# making the length of the trails constant
-trails_len = []
-for i in range(trials_amount):
-    for j in range(stimuli):
-        trails_len.append(np.shape(trials[i][j])[1])
-min_len = min(trails_len)
-for i in range(trials_amount):
-    for j in range(stimuli):
-        trials[i][j] = trials[i][j][:, 0:60]
+# making the length of the trails constant - reshape_trials do that
+
+mean_target_data, mean_distract_data, mean_idle_data = get_mean_of_stims(data, labels, targets)
+
+plot_electrodes(mean_target_data[0], 3)
+plot_electrodes(mean_idle_data[0], 3)
+plot_electrodes(mean_distract_data[0], 3)
 
 
 # divide the data per trail per stimuli and calculate mean per stimuli
-mean_data = []
-for t in range(trials_amount):
-    data_set = trials[t]
-    labels_set = np.array((labels[t]))
-    mean_trials = []
-    for j in range(labels_amount):
-        labels_trails = []
-        for k in range(stimuli):
-            if labels_set[k] == j:
-                labels_trails.append(data_set[k])
-        mean_stimuli = np.zeros((len(labels_trails), 13, 60))
-        for d in range(len(labels_trails)):
-            mean_stimuli[d, :, :] = labels_trails[d]
-        mean_trials.append(np.mean(mean_stimuli, 0))
-    mean_data.append(mean_trials)
+# mean_data = []
+# for t in range(trials_amount):
+#     data_set = trials[t]
+#     labels_set = np.array((labels[t]))
+#     mean_trials = []
+#     for j in range(labels_amount):
+#         labels_trails = []
+#         for k in range(stimuli):
+#             if labels_set[k] == j:
+#                 labels_trails.append(data_set[k])
+#         mean_stimuli = np.zeros((len(labels_trails), 13, 60))
+#         for d in range(len(labels_trails)):
+#             mean_stimuli[d, :, :] = labels_trails[d]
+#         mean_trials.append(np.mean(mean_stimuli, 0))
+#     mean_data.append(mean_trials)
 

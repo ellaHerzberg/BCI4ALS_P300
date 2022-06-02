@@ -129,7 +129,7 @@ class OfflineExperiment(Experiment):
         # make blink between stimulus
         win = self.window_params['main_window']
         win.flip()
-        time.sleep(0.1)
+        time.sleep(0.25)
 
         # Play end sound
         if self.audio:
