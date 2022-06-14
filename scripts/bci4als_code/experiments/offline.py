@@ -35,8 +35,8 @@ class OfflineExperiment(Experiment):
         self.subject_directory: str = ''
         self.session_directory: str = ''
         self.images_path: Dict[str, str] = {
-            'right': os.path.join(os.path.dirname(__file__), 'images', 'red_square.jpg'),
-            'left': os.path.join(os.path.dirname(__file__), 'images', 'purple_triangle.png'),
+            'target_1': os.path.join(os.path.dirname(__file__), 'images', 'red_square.jpg'),
+            'target_2': os.path.join(os.path.dirname(__file__), 'images', 'purple_triangle.png'),
             'idle': os.path.join(os.path.dirname(__file__), 'images', 'blue_circle.png'), }
         self.audio_path: Dict[str, str] = {label: os.path.join(os.path.dirname(__file__), 'audio', f'{label}.mp3')
                                            for label in self.enum_image.values()}
@@ -54,12 +54,12 @@ class OfflineExperiment(Experiment):
                                     color='black', fullscr=self.full_screen)
 
         # Create stimulus
-        right_stim = visual.ImageStim(main_window, image=self.images_path['right'])
-        left_stim = visual.ImageStim(main_window, image=self.images_path['left'])
+        target_1_stim = visual.ImageStim(main_window, image=self.images_path['target_1'])
+        target_2_stim = visual.ImageStim(main_window, image=self.images_path['target_2'])
         idle_stim = visual.ImageStim(main_window, image=self.images_path['idle'])
 
-        self.window_params = {'main_window': main_window, 'right': right_stim,
-                              'left': left_stim, 'idle': idle_stim}
+        self.window_params = {'main_window': main_window, 'target_1': target_1_stim,
+                              'target_2': target_2_stim, 'idle': idle_stim}
 
     def _user_messages(self, target):
         """

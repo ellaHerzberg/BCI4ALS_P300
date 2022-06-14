@@ -27,11 +27,11 @@ class Experiment:
         self.cue_length = None
         self.stim_length = None
         self.session_directory = None
-        self.enum_image = {0: 'right', 1: 'left', 2: 'idle'}
+        self.enum_image = {0: 'target_1', 1: 'target_2', 2: 'idle'}
         self.experiment_type = None
         # self.skip_after = None
 
-        #     labels
+        # labels
         self.labels = []
         self.targets = []
         self._init_labels(keys=classes)
@@ -159,15 +159,15 @@ class Experiment:
         # Create the balance label vector
         # 10% for target_1, 10% for target_2 and 80% for idle
         idle = keys[2]
-        target1 = keys[0]
-        target2 = keys[1]
+        target_1 = keys[0]
+        target_2 = keys[1]
         for j in range(self.num_trials):
             # idle mode
             temp = [idle] * self.num_stims
             # target modes
             percent = int(self.num_stims * 0.1)
-            temp[0:percent] = [target1]*percent
-            temp[percent:2*percent] = [target2]*percent
+            temp[0:percent] = [target_1] * percent
+            temp[percent:2*percent] = [target_2] * percent
 
             random.shuffle(temp)
 

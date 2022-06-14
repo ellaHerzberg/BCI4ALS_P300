@@ -1,5 +1,6 @@
 from scipy.signal import lfilter, butter
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 import pickle
 from creat_epoch_array import *
@@ -19,41 +20,6 @@ def get_mean_of_stims(data, labels, targets):
         mean_idle_data.append(np.mean(idle_data, axis=0))
         mean_distract_data.append(np.mean(distract_data, axis=0))
     return mean_target_data, mean_distract_data, mean_idle_data
-
-
-#  set parameters
-lowcut = 1.
-highcut = 40.
-fs = 125
-
-#  get data from files
-with open("..\\recordings\\Elad_02.06\\2\\trials.pickle", "rb") as f:
-    trials = pickle.load(f)
-with open("..\\recordings\\Elad_02.06\\2\\labels.pickle", "rb") as f:
-    labels = pickle.load(f)
-with open("..\\recordings\\Elad_02.06\\2\\targets.pickle", "rb") as f:
-    targets = pickle.load(f)
-
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-trials_filtered = []
-for trial in trials:
-    trials_filtered[trial] = butter_bandpass_filter(trial, lowcut, highcut, fs, order=5)
-
-#  filter function from mne
-data = get_epochs_array(trials=trials)
 
 
 def plot_electrodes(trial, elec):
@@ -89,6 +55,6 @@ for i in range(elec_len):
         ax.set(ylabel='Frequency')
     plt.show()
 
-        # plot_electrodes(mean_target_data[0], i)
+    # plot_electrodes(mean_target_data[0], i)
     # axs[1].plot_electrodes(mean_idle_data[0], i)
     # axs[2].plot_electrodes(mean_distract_data[0], i)
