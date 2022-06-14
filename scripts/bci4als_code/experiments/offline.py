@@ -10,7 +10,7 @@ from scripts.bci4als_code.experiments.experiment import Experiment
 from scripts.bci4als_code.eeg import EEG
 from playsound import playsound
 from psychopy import visual
-
+import mne
 
 class OfflineExperiment(Experiment):
 
@@ -35,9 +35,9 @@ class OfflineExperiment(Experiment):
         self.subject_directory: str = ''
         self.session_directory: str = ''
         self.images_path: Dict[str, str] = {
-            'right': os.path.join(os.path.dirname(__file__), 'images', 'arrow_right.jpeg'),
-            'left': os.path.join(os.path.dirname(__file__), 'images', 'arrow_left.jpeg'),
-            'idle': os.path.join(os.path.dirname(__file__), 'images', 'square.jpeg'), }
+            'right': os.path.join(os.path.dirname(__file__), 'images', 'red_square.jpg'),
+            'left': os.path.join(os.path.dirname(__file__), 'images', 'purple_triangle.png'),
+            'idle': os.path.join(os.path.dirname(__file__), 'images', 'blue_circle.png'), }
         self.audio_path: Dict[str, str] = {label: os.path.join(os.path.dirname(__file__), 'audio', f'{label}.mp3')
                                            for label in self.enum_image.values()}
         self.audio_success_path = os.path.join(os.path.dirname(__file__), 'audio', f'success.mp3')
@@ -139,7 +139,7 @@ class OfflineExperiment(Experiment):
         if 'escape' == self.get_keypress():
             sys.exit(-1)
 
-    def _extract_trials(self) -> List[List]:
+    def _extract_trials(self):
         """
         The method extract from the offline experiment collected EEG data and split it into trials.
         The method export a pickle file to the subject directory with a list with all the trials.
@@ -155,7 +155,6 @@ class OfflineExperiment(Experiment):
         # ch_names = self.eeg.get_board_names()
         ch_channels = self.eeg.get_board_channels()
         durations, labels = self.eeg.extract_trials(data, self.num_stims, self.num_trials)
-
         # Assert the labels
         assert self.labels == labels, 'The labels are not equals to the extracted labels'
 
@@ -168,9 +167,9 @@ class OfflineExperiment(Experiment):
                 trial.append(stim)
             trials.append(trial)
 
-        return trials
+        return trials, data, durations
 
-    def _export_files(self, trials):
+    def _export_files(self, trials, data=None, durations=None):
         """
         Export the experiment files (trials & labels)
         :param trials:
@@ -190,6 +189,14 @@ class OfflineExperiment(Experiment):
         targets_path = os.path.join(self.session_directory, 'targets.pickle')
         print(f"Saving targets to {targets_path}")
         pickle.dump(self.targets, open(targets_path, 'wb'))
+        if data:
+            data_path = os.path.join(self.session_directory, 'raw_data.pickle')
+            print(f"Saving raw data to {data_path}")
+            pickle.dump(data, open(data_path, 'wb'))
+        if data:
+            durations_path = os.path.join(self.session_directory, 'durations.pickle')
+            print(f"Saving durations for data splitting in {durations_path}")
+            pickle.dump(durations, open(durations_path, 'wb'))
 
     def run(self):
         # Init the current experiment folder
@@ -220,12 +227,12 @@ class OfflineExperiment(Experiment):
                 self._show_stimulus(t, s)
 
         # Export and return the data
-        trials = self._extract_trials()
+        trials, data, durations = self._extract_trials()
 
         print("Turning EEG connection OFF")
         self.eeg.off()
 
         # Dump files to pickle
-        self._export_files(trials)
+        self._export_files(trials, data, durations)
 
         return trials, self.labels
