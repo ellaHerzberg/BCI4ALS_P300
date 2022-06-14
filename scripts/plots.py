@@ -24,6 +24,7 @@ def get_mean_of_stims(data, labels, targets):
 #  set parameters
 lowcut = 1.
 highcut = 40.
+fs = 125
 
 #  get data from files
 with open("..\\recordings\\Elad_02.06\\2\\trials.pickle", "rb") as f:
@@ -46,8 +47,9 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-#  filter function from mne
-data = get_epochs_array(trials=trials)
+trials_filtered = []
+for trial in trials:
+    trials_filtered[trial] = butter_bandpass_filter(trial, lowcut, highcut, fs, order=5)
 
 def plot_electrodes(trial, electrod):
     plt.figure()
@@ -56,6 +58,7 @@ def plot_electrodes(trial, electrod):
     plt.ylabel("Frequency")
     plt.show()
 
+data = get_epochs_array(trials=trials)
 
 mean_target_data, mean_distract_data, mean_idle_data = get_mean_of_stims(data, labels, targets)
 
@@ -63,11 +66,8 @@ plot_electrodes(mean_target_data[0], 3)
 plot_electrodes(mean_idle_data[0], 3)
 plot_electrodes(mean_distract_data[0], 3)
 
-trials_filtered = []
-for trial in data:
-    trial.filter(l_freq=lowcut, h_freq=highcut, fir_design='firwin',
-                 skip_by_annotation='edge', verbose=False)
-    # trials_filtered.append(butter_bandpass_filter(trial, lowcut, highcut, 125, order=2))
+
+# trials_filtered.append(butter_bandpass_filter(trial, lowcut, highcut, 125, order=2))
 # data = trials_filtered
 
 
