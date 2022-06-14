@@ -1,6 +1,5 @@
 from scipy.signal import lfilter, butter
 import numpy as np
-import os
 import matplotlib.pyplot as plt
 import pickle
 from creat_epoch_array import *
