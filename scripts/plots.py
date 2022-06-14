@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from creat_epoch_array import *
+from bci4als_code.eeg import EEG
 
 
 def get_mean_of_stims(data, labels, targets):
@@ -22,8 +23,10 @@ def get_mean_of_stims(data, labels, targets):
 
 
 #  set parameters
+ch_names = ['C3', 'C4', 'Cz', 'FC1', 'FC2', 'FC5', 'FC6', 'CP1', 'CP2', 'CP5', 'CP6', 'O1', 'O2']
 lowcut = 1.
 highcut = 40.
+notch = 50
 fs = 125
 
 #  get data from files
@@ -34,25 +37,15 @@ with open("..\\recordings\\Elad_02.06\\2\\labels.pickle", "rb") as f:
 with open("..\\recordings\\Elad_02.06\\2\\targets.pickle", "rb") as f:
     targets = pickle.load(f)
 
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
+# filter!
 trials_filtered = []
 for trial in trials:
-    trials_filtered[trial] = butter_bandpass_filter(trial, lowcut, highcut, fs, order=5)
+    # t = np.array(trial,)
+    raw = EEG._board_to_mne(trial, ch_names)
+    # trials_array = mne.io.RawArray(trial)
+    trials_filtered[trial] = EEG.filter_data(raw, notch, lowcut, highcut)
 
-#  filter function from mne
+
 data = get_epochs_array(trials=trials)
 
 
@@ -92,3 +85,19 @@ for i in range(elec_len):
         # plot_electrodes(mean_target_data[0], i)
     # axs[1].plot_electrodes(mean_idle_data[0], i)
     # axs[2].plot_electrodes(mean_distract_data[0], i)
+
+
+
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
