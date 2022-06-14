@@ -10,13 +10,13 @@ highcut = 40.
 
 def load_data():
     #  get data from files
-    with open("..\\recordings\\Elad_02.06\\44\\raw_data.pickle", "rb") as f:
+    with open("..\\recordings\\3\\trials.pickle", "rb") as f:
         raw_data = pickle.load(f)
-    with open("..\\recordings\\Elad_02.06\\44\\labels.pickle", "rb") as f:
+    with open("..\\recordings\\3\\labels.pickle", "rb") as f:
         labels = pickle.load(f)
-    with open("..\\recordings\\Elad_02.06\\44\\targets.pickle", "rb") as f:
+    with open("..\\recordings\\3\\targets.pickle", "rb") as f:
         targets = pickle.load(f)
-    with open("..\\recordings\\Elad_02.06\\44\\durations.pickle", "rb") as f:
+    with open("..\\recordings\\3\\durations.pickle", "rb") as f:
         durations = pickle.load(f)
 
     return raw_data, labels, targets, durations

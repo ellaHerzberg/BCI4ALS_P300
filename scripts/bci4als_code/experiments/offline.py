@@ -189,14 +189,16 @@ class OfflineExperiment(Experiment):
         targets_path = os.path.join(self.session_directory, 'targets.pickle')
         print(f"Saving targets to {targets_path}")
         pickle.dump(self.targets, open(targets_path, 'wb'))
-        if data:
-            data_path = os.path.join(self.session_directory, 'raw_data.pickle')
-            print(f"Saving raw data to {data_path}")
-            pickle.dump(data, open(data_path, 'wb'))
-        if data:
-            durations_path = os.path.join(self.session_directory, 'durations.pickle')
-            print(f"Saving durations for data splitting in {durations_path}")
-            pickle.dump(durations, open(durations_path, 'wb'))
+
+        # Save the raw_data as pickle file
+        data_path = os.path.join(self.session_directory, 'raw_data.pickle')
+        print(f"Saving raw data to {data_path}")
+        pickle.dump(data, open(data_path, 'wb'))
+
+        # Save the durations as pickle file
+        durations_path = os.path.join(self.session_directory, 'durations.pickle')
+        print(f"Saving durations for data splitting in {durations_path}")
+        pickle.dump(durations, open(durations_path, 'wb'))
 
     def run(self):
         # Init the current experiment folder
