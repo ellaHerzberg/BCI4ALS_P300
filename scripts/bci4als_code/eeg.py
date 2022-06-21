@@ -131,7 +131,7 @@ class EEG:
         :param board_data: raw ndarray from board
         :return:
         """
-        eeg_data = board_data / 1000000  # BrainFlow returns uV, convert to V for MNE
+        eeg_data = board_data / 1e6  # BrainFlow returns uV, convert to V for MNE
 
         # Creating MNE objects from BrainFlow data arrays
         ch_types = ['eeg'] * len(board_data)

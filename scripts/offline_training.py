@@ -1,21 +1,21 @@
 from bci4als_code.eeg import EEG
-# from bci4als.ml_model import MLModel
+from bci4als.ml_model import MLModel
 from scripts.bci4als_code.experiments.offline import OfflineExperiment
 
 
 def offline_experiment():
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
-    eeg = EEG(board_id=SYNTHETIC_BOARD)
+    eeg = EEG(board_id=CYTON_DAISY)
 
-    exp = OfflineExperiment(eeg=eeg, num_trials=3, stim_length=0.3, cue_length=1,
-                            full_screen=True, audio=False, num_stims=10)
+    exp = OfflineExperiment(eeg=eeg, num_trials=2, stim_length=0.3, cue_length=1,
+                            full_screen=True, audio=False, num_stims=53)
 
     trials, labels = exp.run()
 
     # Classification
     # TODO: Implement on our own
-
+    model = MLModel(trials=trials, labels=labels)
     session_directory = exp.session_directory
 
     # model = MLModel(trials=trials, labels=labels)
