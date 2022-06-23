@@ -42,6 +42,7 @@ def down_sample(mean_data, sample_rate):
         sampled_data.append(sampled_electrode)
     return sampled_data
 
+
 # we give the classifier the down sampled results -  only the relevant electrodes
 # the classifier should tell us if the patient was concentrated
 # when he saw the target

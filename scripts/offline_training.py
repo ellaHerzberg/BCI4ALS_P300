@@ -8,15 +8,15 @@ def offline_experiment():
     CYTON_DAISY = 2
     eeg = EEG(board_id=CYTON_DAISY)
 
-    exp = OfflineExperiment(eeg=eeg, num_trials=2, stim_length=0.3, cue_length=1,
-                            full_screen=True, audio=False, num_stims=53)
+    exp = OfflineExperiment(eeg=eeg, num_trials=3, stim_length=0.8, cue_length=1,
+                            full_screen=True, audio=False, num_stims=65)
 
     trials, labels = exp.run()
 
     # Classification
     # TODO: Implement on our own
-    model = MLModel(trials=trials, labels=labels)
-    session_directory = exp.session_directory
+    # model = MLModel(trials=trials, labels=labels)
+    # session_directory = exp.session_directory
 
     # model = MLModel(trials=trials, labels=labels)
     # model.offline_training(eeg=eeg, model_type='csp_lda')

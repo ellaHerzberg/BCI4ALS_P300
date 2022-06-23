@@ -8,7 +8,7 @@ lowcut = 10.
 highcut = 40.
 ch_channels = list(range(1, 14))
 ch_names = ['C3', 'C4', 'Cz', 'FC1', 'FC2', 'FC5', 'FC6', 'CP1', 'CP2', 'CP5', 'CP6', 'O1', 'O2']
-
+before_stim = int(0.2*75)
 
 def load_data(path):
     #  get data from files
@@ -32,7 +32,7 @@ def split_data(data, ch_channels, durations):
     for duration in durations:
         trial = []
         for start, end in duration:
-            stim = data[ch_channels, start:end]
+            stim = data[ch_channels, start-before_stim:end]
             trial.append(stim)
         trials.append(trial)
     return trials
@@ -80,6 +80,20 @@ def get_epochs_array(trials):
     return epoch
 
 
+def remove_baseline(trials):
+    new_trials = []
+    for trial in trials:
+        new_trial=[]
+        for stim in trial:
+            new_stim = []
+            for electrode in stim:
+                baseline = np.mean(electrode[0:before_stim])
+                new_stim.append(electrode[before_stim:-1]-baseline)
+            new_trial.append(np.array(new_stim))
+        new_trials.append(new_trial)
+    return new_trials
+
+
 def preprocess_data(path):
     raw_data, labels, targets, durations, trials = load_data(path)
 
@@ -90,7 +104,8 @@ def preprocess_data(path):
     raw_data[:, 1:14, :] = epochs.get_data()
 
     trials = split_data(raw_data.squeeze(0), ch_channels, durations)
-    trials = reshape_trails(trials)
+    baseline_trials = remove_baseline(trials)
+    trials = reshape_trails(baseline_trials)
 
     return trials, labels, targets
 
