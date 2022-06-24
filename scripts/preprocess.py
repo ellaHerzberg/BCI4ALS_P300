@@ -88,7 +88,7 @@ def remove_baseline(trials):
             new_stim = []
             for electrode in stim:
                 baseline = np.mean(electrode[0:before_stim])
-                new_stim.append(electrode[before_stim:-1]-baseline)
+                new_stim.append(electrode-baseline)
             new_trial.append(np.array(new_stim))
         new_trials.append(new_trial)
     return new_trials
