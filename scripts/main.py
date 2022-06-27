@@ -27,10 +27,10 @@ def load_data(path, plot=False):
 
     return down_sample_target, down_sample_idle
 
-paths = [f"..\\recordings\\Tamar_22.06\\{i}" for i in range(1,5)]
+paths = [f"..\\recordings\\Tamar_22.06\\{i}" for i in range(2,5)]
 targets, idles = [], []
 for path in paths:
-    down_sample_target, down_sample_idle = load_data(path, plot=False)
+    down_sample_target, down_sample_idle = load_data(path, plot=True)
     targets.extend(down_sample_target)
     idles.extend(down_sample_idle)
 

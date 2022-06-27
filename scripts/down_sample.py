@@ -36,10 +36,10 @@ def down_sample(mean_data, sample_rate):
     """
     sampled_data = []
     for trail in mean_data:
-        sampled_electrode = []
+        sampled_trial = []
         for electrode in trail:
-            sampled_electrode.append(electrode[1::sample_rate])
-        sampled_data.append(sampled_electrode)
+            sampled_trial.append(electrode[1::sample_rate])
+        sampled_data.append(sampled_trial[0:8]) # take only the 8 first electrodes
     return sampled_data
 
 
