@@ -6,7 +6,7 @@ from scripts.bci4als_code.experiments.offline import OfflineExperiment
 def offline_experiment():
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
-    eeg = EEG(board_id=CYTON_DAISY)
+    eeg = EEG(board_id=SYNTHETIC_BOARD)
 
     exp = OfflineExperiment(eeg=eeg, num_trials=3, stim_length=0.8, cue_length=1,
                             full_screen=True, audio=False, num_stims=65)

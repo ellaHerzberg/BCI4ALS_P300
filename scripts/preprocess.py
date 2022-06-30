@@ -4,11 +4,12 @@ import pickle
 
 
 #  set parameters
-lowcut = 10.
-highcut = 40.
+lowcut = 1.
+highcut = 30.
 ch_channels = list(range(1, 14))
 ch_names = ['C3', 'C4', 'Cz', 'FC1', 'FC2', 'FC5', 'FC6', 'CP1', 'CP2', 'CP5', 'CP6', 'O1', 'O2']
 before_stim = int(0.2*75)
+sample_rate = 10
 
 def load_data(path):
     #  get data from files
@@ -99,7 +100,7 @@ def preprocess_data(path):
 
     raw_data = raw_data[np.newaxis, ...]
     epochs = get_epochs_array(raw_data[:, 1:14, :])
-    epochs.filter(l_freq=4., h_freq=50., verbose=False)
+    epochs.filter(l_freq=lowcut, h_freq=highcut, verbose=False)
 
     raw_data[:, 1:14, :] = epochs.get_data()
 
@@ -110,3 +111,40 @@ def preprocess_data(path):
     return trials, labels, targets
 
 
+def get_mean_of_stims(data, labels, targets):
+    """
+    Calculate mean for every type of stimulus
+    """
+    mean_target_data, mean_distract_data, mean_idle_data = [], [], []
+
+    for trial, label, target in zip(data, labels, targets):
+        trial_data = trial
+        if not isinstance(trial, np.ndarray):
+            trial_data = trial.get_data()
+
+        label_array = np.array(label)
+
+        # split for different type of stimulus
+        target_data = trial_data[label_array == target]
+        idle_data = trial_data[label_array == 2]
+        distract_data = trial_data[label_array == (1 - target)]
+
+        # calc mean for every trial
+        mean_target_data.append(np.mean(target_data, axis=0))
+        mean_idle_data.append(np.mean(idle_data, axis=0))
+        mean_distract_data.append(np.mean(distract_data, axis=0))
+
+    return mean_target_data, mean_distract_data, mean_idle_data
+
+
+def down_sample(mean_data, sample_rate):
+    """
+    Extract every n'th (=sample_rate) sample
+    """
+    sampled_data = []
+    for trail in mean_data:
+        sampled_trial = []
+        for electrode in trail:
+            sampled_trial.append(electrode[1::sample_rate])
+        sampled_data.append(sampled_trial[0:8]) # take only the 8 first electrodes
+    return sampled_data
