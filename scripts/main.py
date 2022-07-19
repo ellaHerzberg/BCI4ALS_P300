@@ -21,15 +21,17 @@ def load_data(path, plot=False):
     return down_sample_target, down_sample_idle
 
 
-paths = [f"..\\recordings\\Tamar_27.06\\{i}" for i in range(1, 4)]
-targets, idles = [], []
-for path in paths:
-    down_sample_target, down_sample_idle = load_data(path, plot=False)
-    targets.extend(down_sample_target)
-    idles.extend(down_sample_idle)
+if __name__=='__main__':
+    paths = [f"..\\recordings\\Tamar_27.06\\{i}" for i in range(1, 4)]
+    targets, idles = [], []
+    for path in paths:
+        down_sample_target, down_sample_idle = load_data(path, plot=False)
+        targets.extend(down_sample_target)
+        idles.extend(down_sample_idle)
 
-# Prepare data for the classifier:
-labels = np.concatenate([np.zeros(len(idles)), np.ones(len(targets))])
-trials = np.vstack([np.array(idles), np.array(targets)])
+    # Prepare data for the classifier:
+    labels = np.concatenate([np.zeros(len(idles)), np.ones(len(targets))])
+    trials = np.vstack([np.array(idles), np.array(targets)])
 
-csp_lda(trials, labels)
+    csp_lda(trials, labels)
+

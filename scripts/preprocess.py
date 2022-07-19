@@ -2,7 +2,6 @@ import numpy as np
 import mne
 import pickle
 
-
 #  set parameters
 lowcut = 1.
 highcut = 30.
@@ -97,8 +96,11 @@ def remove_baseline(trials):
 
 def preprocess_data(path):
     raw_data, labels, targets, durations, trials = load_data(path)
+    return general_preprocess(raw_data, durations, labels, targets)
 
-    raw_data = raw_data[np.newaxis, ...]
+
+def general_preprocess(data, durations, labels, targets=None):
+    raw_data = data[np.newaxis, ...]
     epochs = get_epochs_array(raw_data[:, 1:14, :])
     epochs.filter(l_freq=lowcut, h_freq=highcut, verbose=False)
 

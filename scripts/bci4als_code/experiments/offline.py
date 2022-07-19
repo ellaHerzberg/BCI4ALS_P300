@@ -14,7 +14,7 @@ import mne
 
 class OfflineExperiment(Experiment):
 
-    def __init__(self, eeg: EEG, num_trials: int, stim_length: float,
+    def __init__(self, eeg: EEG, num_trials: int, stim_length: float=1,
                  next_length: float = 1, cue_length: float = 0.25, ready_length: float = 1,
                  full_screen: bool = False, audio: bool = False, classes: tuple = (0, 1, 2),
                  num_stims=100):
@@ -156,7 +156,7 @@ class OfflineExperiment(Experiment):
         ch_channels = self.eeg.get_board_channels()
         durations, labels = self.eeg.extract_trials(data, self.num_stims, self.num_trials)
         # Assert the labels
-        assert self.labels == labels, 'The labels are not equals to the extracted labels'
+        self.validate_labels(labels)
 
         durations = [durations[x:x + self.num_stims] for x in range(0, len(durations), self.num_stims)]
         # Append each
@@ -168,6 +168,9 @@ class OfflineExperiment(Experiment):
             trials.append(trial)
 
         return trials, data, durations
+
+    def validate_labels(self, labels):
+        assert self.labels == labels, 'The labels are not equals to the extracted labels'
 
     def _export_files(self, trials, data=None, durations=None):
         """

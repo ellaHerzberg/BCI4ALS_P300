@@ -90,7 +90,7 @@ def csp_lda(trials, labels, stimuli=("idle", "target")):
     lda_plot.fit(csp_proj[:, :2], labels)
     plot_decision_boundry(lda_plot, csp_proj, labels, stimuli)
     # csp.plot_patterns(epochs.info, ch_type='eeg', units='Patterns (AU)', size=1.5)
-    return csp_lda_score
+    return clf
 
 
 # trials = epochs.get_data()
