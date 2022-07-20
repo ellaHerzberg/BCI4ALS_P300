@@ -5,7 +5,7 @@ import numpy as np
 from classifier import csp_lda
 import pickle
 import os
-from time import time
+import time
 
 
 def offline_experiment():

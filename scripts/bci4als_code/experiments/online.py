@@ -1,5 +1,7 @@
 from scripts.bci4als_code.eeg import EEG
 from scripts.bci4als_code.experiments.offline import OfflineExperiment
+from psychopy import visual, event
+import sys
 
 
 class OnlineExperiment(OfflineExperiment):
@@ -20,8 +22,7 @@ class OnlineExperiment(OfflineExperiment):
 
     """
 
-    def __init__(self, eeg: EEG, num_trials: int, num_stims=100, stim_length = 0.8):
-
+    def __init__(self, eeg: EEG, num_trials: int, num_stims=100, stim_length=0.8):
         super().__init__(eeg, num_trials, stim_length, num_stims=num_stims)
         # experiment params
         self.experiment_type = "Online"
@@ -29,6 +30,41 @@ class OnlineExperiment(OfflineExperiment):
 
     def validate_labels(self, labels):
         pass
+
+    def check_prediction(self):
+        """
+        target_1 = red_square
+        target_2 = purple_triangle
+        :return the corresponding label for the chosen target
+        """
+        # Init psychopy and screen params
+        self._init_window()
+
+        win = self.window_params['main_window']
+        mouse_pos = event.Mouse()
+
+        # init visuals
+        target_1 = visual.ImageStim(win, self.images_path[self.enum_image[0]], pos=(180, -75),
+                                    size=(235, 200))
+        target_2 = visual.ImageStim(win, self.images_path[self.enum_image[1]], pos=(-180, -75),
+                                    size=(210, 210))
+        message = visual.TextStim(win, 'Please choose the target you had concentrated on:',
+                                  color='white', height=35, pos=(0, 150))
+        # show options
+        target_1.draw()
+        target_2.draw()
+        message.draw()
+        win.flip()
+
+        while not mouse_pos.isPressedIn(target_1) or not mouse_pos.isPressedIn(target_2):
+            if mouse_pos.isPressedIn(target_1):
+                return 0
+            if mouse_pos.isPressedIn(target_2):
+                return 1
+            # Halt if escape was pressed
+            if 'escape' == self.get_keypress():
+                sys.exit(-1)
+        win.close()
 
     def run(self, use_eeg: bool = True, full_screen: bool = False):
         # Init the current experiment folder
@@ -52,11 +88,15 @@ class OnlineExperiment(OfflineExperiment):
         for s in range(self.num_stims):
             # Show stim on window
             self._show_stimulus(0, s)
+        self.window_params['main_window'].close()
 
         # Export and return the data
         trials, data, durations = self._extract_trials()
 
         print("Turning EEG connection OFF")
         self.eeg.off()
-        return trials, data, durations, self.labels
 
+        # Dump files to pickle
+        # self._export_files(trials, data, durations)
+
+        return trials, data, durations, self.labels

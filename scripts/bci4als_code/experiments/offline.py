@@ -1,16 +1,14 @@
 import os
 import pickle
-import random
 import sys
 import time
 from tkinter import messagebox
-from typing import Dict, List, Any
-import pandas as pd
+from typing import Dict, Any
 from scripts.bci4als_code.experiments.experiment import Experiment
 from scripts.bci4als_code.eeg import EEG
 from playsound import playsound
 from psychopy import visual
-import mne
+
 
 class OfflineExperiment(Experiment):
 
@@ -41,12 +39,12 @@ class OfflineExperiment(Experiment):
         self.audio_path: Dict[str, str] = {label: os.path.join(os.path.dirname(__file__), 'audio', f'{label}.mp3')
                                            for label in self.enum_image.values()}
         self.audio_success_path = os.path.join(os.path.dirname(__file__), 'audio', f'success.mp3')
-        self.visual_params: Dict[str, Any] = {'text_color': 'white', 'text_height': 48}
+        self.visual_params: Dict[str, Any] = {'text_color': 'Please choose the target you concentrated on', 'text_height': 48}
 
     def _init_window(self):
         """
         init the psychopy window
-        :return: dictionary with the window, left arrow, right arrow and idle.
+        :return: dictionary with the window, red_square, purple_triangle and blue_circle (idle).
         """
 
         # Create the main window
@@ -230,6 +228,7 @@ class OfflineExperiment(Experiment):
             for s in range(self.num_stims):
                 # Show stim on window
                 self._show_stimulus(t, s)
+        self.window_params['main_window'].close()
 
         # Export and return the data
         trials, data, durations = self._extract_trials()

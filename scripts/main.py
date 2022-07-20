@@ -1,6 +1,7 @@
 from preprocess import *
 from plots import *
 from classifier import csp_lda
+import os
 
 
 def load_data(path, plot=False):
@@ -33,5 +34,7 @@ if __name__=='__main__':
     labels = np.concatenate([np.zeros(len(idles)), np.ones(len(targets))])
     trials = np.vstack([np.array(idles), np.array(targets)])
 
-    csp_lda(trials, labels)
+    classifier = csp_lda(trials, labels)
+    directory = f"..\\recordings\\model"
+    pickle.dump(classifier, open(os.path.join(directory, 'model.pickle'), 'wb'))
 
