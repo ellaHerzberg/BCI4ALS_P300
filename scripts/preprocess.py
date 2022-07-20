@@ -32,7 +32,7 @@ def split_data(data, ch_channels, durations):
     for duration in durations:
         trial = []
         for start, end in duration:
-            stim = data[ch_channels, start-before_stim:end]
+            stim = data[ch_channels, max(0,start-before_stim):end]
             trial.append(stim)
         trials.append(trial)
     return trials

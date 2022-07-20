@@ -8,7 +8,7 @@ from tkinter.filedialog import askdirectory
 import brainflow
 
 from scripts.bci4als_code.eeg import EEG
-from scripts.bci4als_code.experiments.feedback import Feedback
+# from scripts.bci4als_code.experiments.feedback import Feedback
 from psychopy import event
 
 
@@ -89,25 +89,25 @@ class Experiment:
             sys.exit(-1)
         return subject_folder
 
-    @staticmethod
-    def _wait_between_trials(feedback: Feedback, eeg: EEG, use_eeg: bool):
-        """
-        Method for waiting between trials.
-
-        1. Show and empty feedback while waiting.
-        2. wait for user's key-press
-        3. Empty the EEG board
-        """
-
-        # Show empty feedback
-        feedback.display(0)
-
-        # Wait for key-press
-        event.waitKeys()
-
-        # Empty the board
-        if use_eeg:
-            eeg.clear_board()
+    # @staticmethod
+    # def _wait_between_trials(feedback: Feedback, eeg: EEG, use_eeg: bool):
+    #     """
+    #     Method for waiting between trials.
+    #
+    #     1. Show and empty feedback while waiting.
+    #     2. wait for user's key-press
+    #     3. Empty the EEG board
+    #     """
+    #
+    #     # Show empty feedback
+    #     feedback.display(0)
+    #
+    #     # Wait for key-press
+    #     event.waitKeys()
+    #
+    #     # Empty the board
+    #     if use_eeg:
+    #         eeg.clear_board()
 
     @staticmethod
     def get_keypress():
