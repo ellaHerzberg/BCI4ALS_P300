@@ -58,13 +58,14 @@ class OnlineExperiment(OfflineExperiment):
 
         while not mouse_pos.isPressedIn(target_1) or not mouse_pos.isPressedIn(target_2):
             if mouse_pos.isPressedIn(target_1):
-                return 0
-            if mouse_pos.isPressedIn(target_2):
+                win.close()
                 return 1
+            if mouse_pos.isPressedIn(target_2):
+                win.close()
+                return 2
             # Halt if escape was pressed
             if 'escape' == self.get_keypress():
                 sys.exit(-1)
-        win.close()
 
     def run(self, use_eeg: bool = True, full_screen: bool = False):
         # Init the current experiment folder
