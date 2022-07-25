@@ -4,12 +4,12 @@ import sys
 from datetime import datetime
 from tkinter import messagebox
 from tkinter.filedialog import askdirectory
-
-import brainflow
-
 from scripts.bci4als_code.eeg import EEG
-# from scripts.bci4als_code.experiments.feedback import Feedback
 from psychopy import event
+try:
+    from brainflow import BoardIds
+except ImportError:
+    from brainflow.board_shim import BoardIds
 
 
 class Experiment:
@@ -18,7 +18,7 @@ class Experiment:
         self.num_stims: int = num_stims
         self.eeg: EEG = eeg
 
-        if self.eeg.board_id == brainflow.BoardIds.SYNTHETIC_BOARD:
+        if self.eeg.board_id == BoardIds.SYNTHETIC_BOARD:
             messagebox.showwarning(title="bci4als WARNING", message="You are running a synthetic board!")
             self.debug = True
         else:
