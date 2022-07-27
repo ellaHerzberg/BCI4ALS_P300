@@ -1,12 +1,14 @@
 from typing import List, Tuple, Optional
-
 import mne
 import numpy as np
 import pandas as pd
 import serial.tools.list_ports
-from brainflow import BrainFlowInputParams, BoardShim, BoardIds
 from mne_features.feature_extraction import extract_features
 from nptyping import NDArray
+try:
+    from brainflow import BrainFlowInputParams, BoardShim, BoardIds
+except ImportError:
+    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 
 
 class EEG:
