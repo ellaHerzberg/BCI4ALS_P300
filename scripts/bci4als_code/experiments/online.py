@@ -67,37 +67,37 @@ class OnlineExperiment(OfflineExperiment):
             if 'escape' == self.get_keypress():
                 sys.exit(-1)
 
-    def run(self, use_eeg: bool = True, full_screen: bool = False):
-        # Init the current experiment folder
-        self.subject_directory = self._ask_subject_directory()
-        self.session_directory = self.create_session_folder(self.subject_directory)
-
-        # Create experiment's metadata
-        self.write_metadata()
-
-        # Init psychopy and screen params
-        self._init_window()
-
-        # Start stream
-        # initialize headset
-        print("Turning EEG connection ON")
-        self.eeg.on()
-
-        print(f"Running {self.num_trials} trials")
-        # Run trials
-        # Messages for user
-        for s in range(self.num_stims):
-            # Show stim on window
-            self._show_stimulus(0, s)
-        self.window_params['main_window'].close()
-
-        # Export and return the data
-        trials, data, durations = self._extract_trials()
-
-        print("Turning EEG connection OFF")
-        self.eeg.off()
-
-        # Dump files to pickle
-        # self._export_files(trials, data, durations)
-
-        return trials, data, durations, self.labels
+    # def run(self, use_eeg: bool = True, full_screen: bool = False):
+    #     # Init the current experiment folder
+    #     self.subject_directory = self._ask_subject_directory()
+    #     self.session_directory = self.create_session_folder(self.subject_directory)
+    #
+    #     # Create experiment's metadata
+    #     self.write_metadata()
+    #
+    #     # Init psychopy and screen params
+    #     self._init_window()
+    #
+    #     # Start stream
+    #     # initialize headset
+    #     print("Turning EEG connection ON")
+    #     self.eeg.on()
+    #
+    #     print(f"Running {self.num_trials} trials")
+    #     # Run trials
+    #     # Messages for user
+    #     for s in range(self.num_stims):
+    #         # Show stim on window
+    #         self._show_stimulus(0, s)
+    #     self.window_params['main_window'].close()
+    #
+    #     # Export and return the data
+    #     trials, data, durations = self._extract_trials()
+    #
+    #     print("Turning EEG connection OFF")
+    #     self.eeg.off()
+    #
+    #     # Dump files to pickle
+    #     # self._export_files(trials, data, durations)
+    #
+    #     return trials, data, durations, self.labels

@@ -7,6 +7,7 @@ import time
 from classifier import csp_lda
 import os
 
+
 def _run_experiment(exp, model):
     trials_before, data, durations, labels = exp.run(use_eeg=True, full_screen=False)
     # time.sleep(1)
@@ -54,7 +55,7 @@ def run_experiment(model_path: str):
     eeg = EEG(board_id=SYNTHETIC_BOARD)
     exp = OnlineExperiment(eeg=eeg, num_trials=1, num_stims=10, stim_length=0.8)
     idles, targets = [], []
-    for i in range(1,3):
+    for i in range(1, 3):
         idle, target = _run_experiment(exp, model)
         idles.extend(idle)
         targets.extend(target)

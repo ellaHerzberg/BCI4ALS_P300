@@ -75,7 +75,7 @@ class OfflineExperiment(Experiment):
         win = self.window_params['main_window']
 
         # Show 'next' message
-        next_message = visual.TextStim(win, 'The target is...', color=color, height=height)
+        next_message = visual.TextStim(win, 'The target is...', color=[0,0,0], height=height)
         next_message.draw()
         win.flip()
 
@@ -93,7 +93,7 @@ class OfflineExperiment(Experiment):
             playsound(self.audio_path[trial_image])
 
         # Show ready message
-        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=color, height=height)
+        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color=[0,0,0], height=height)
         ready_message.draw()
         win.flip()
         time.sleep(self.ready_length)

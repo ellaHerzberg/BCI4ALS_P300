@@ -12,9 +12,9 @@ def offline_experiment():
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
 
-    eeg = EEG(board_id=SYNTHETIC_BOARD)
-    exp = OfflineExperiment(eeg=eeg, num_trials=2, stim_length=0.8, cue_length=1,
-                            full_screen=True, audio=False, num_stims=10)
+    eeg = EEG(board_id=CYTON_DAISY)
+    exp = OfflineExperiment(eeg=eeg, num_trials=5, stim_length=0.8, cue_length=1,
+                            full_screen=True, audio=False, num_stims=30)
 
     exp.run()
     time.sleep(1)
