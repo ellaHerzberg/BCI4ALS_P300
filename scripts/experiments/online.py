@@ -82,4 +82,5 @@ class OnlineExperiment(OfflineExperiment):
         print("Turning EEG connection OFF")
         self.eeg.off()
 
+        self._export_files(trials, data, durations)
         return trials, data, durations, self.labels

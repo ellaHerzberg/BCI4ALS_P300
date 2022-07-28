@@ -51,11 +51,11 @@ def run_experiment(model_path: str):
 
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
-    eeg = EEG(board_id=SYNTHETIC_BOARD)
-    exp = OnlineExperiment(eeg=eeg, num_trials=1, num_stims=10, stim_length=0.8)
+    eeg = EEG(board_id=CYTON_DAISY)
+    exp = OnlineExperiment(eeg=eeg, num_trials=1, num_stims=65, stim_length=0.8)
 
     idles, targets = [], []
-    for i in range(1, 3): # run twice for accuracy
+    for i in range(1, 6):  # run twice for accuracy
         idle, target = _run_experiment(exp, model)
 
         idles.extend(idle)
