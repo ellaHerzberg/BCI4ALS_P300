@@ -1,5 +1,9 @@
 import matplotlib.pyplot as plt
 
+"""
+this file contains plotting functions to help us visualize the data
+and choose the best electrodes to use for the ML
+"""
 
 def plot_electrodes(trial, elec):
     """
@@ -35,7 +39,7 @@ def plot_all_mean_data(mean_target_data, mean_distract_data, mean_idle_data):
 
 def plot_all_down_sample(down_sample_target, down_sample_idle):
     """
-    plot means for every stimulus for every electrode
+    plot down sampled for every stimulus for every electrode
     """
     elec_len = 8
 
@@ -73,7 +77,7 @@ def plot_mean_data(mean_target_data, mean_distract_data, mean_idle_data):
 
 def plot_down_sample(down_sample_target, down_sample_idle):
     """
-    plot means for every stimulus for every electrode
+    plot down sampled for every stimulus for every electrode
     """
     elec_len = 8
     for i in range(elec_len):

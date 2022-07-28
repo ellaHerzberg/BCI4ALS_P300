@@ -4,9 +4,9 @@ This project is an extension of the [BCI4ALS project](https://github.com/evyatar
 Here the user is asked to concentrate on one of the following shapes:
 
 <p float="left">
-  <img src="./scripts/bci4als_code/experiments/images/purple_triangle.png" width="150" height="150" />
-  <img src="./scripts/bci4als_code/experiments/images/red_square.jpg" width="150" height="150" /> 
-  <img src="./scripts/bci4als_code/experiments/images/blue_circle.png" width="150" height="150" />
+  <img src="./scripts/experiments/images/purple_triangle.png" width="150" height="150" />
+  <img src="./scripts/experiments/images/red_square.jpg" width="150" height="150" /> 
+  <img src="./scripts/experiments/images/blue_circle.png" width="150" height="150" />
 </p>
 
 Which represent 3 types of stimuli: idle, target and distractor.  

@@ -27,6 +27,10 @@ def load_data(path):
 
 
 def split_data(data, ch_channels, durations):
+    """
+    This method splits the raw data to trials for each channel
+    :return: trials array, each index contains stim array
+    """
     # Append each
     trials = []
     for duration in durations:
@@ -39,6 +43,10 @@ def split_data(data, ch_channels, durations):
 
 
 def reshape_trails(trials):
+    """
+    This method reshape the trials so all are the same length
+    :return: trials array with uniform shape
+    """
     n_samples = np.inf
     new_trials = []
     # find min num of stims for each trail
@@ -56,6 +64,7 @@ def reshape_trails(trials):
 
 def get_epochs_array(trials):
     """
+    This method turns the trials to epochs array
     :param trials: 4 dimensional array
     :return: list of epoch array for each trial
     """
@@ -72,22 +81,26 @@ def get_epochs_array(trials):
     kept_channel_info = [mont1020.dig[x+3] for x in ind]
     # Keep the first three rows as they are the fiducial points information
     mont1020_new.dig = mont1020.dig[0:3]+kept_channel_info
-    # mont1020_new.plot()
-    # Mirror freqs
-    # new_trials = np.concatenate((trial[:, :, ::-1], trial, trial[:, :, ::-1]), axis=2)
     epoch = mne.EpochsArray(trials, info)
     epoch.set_montage(mont1020_new)
     return epoch
 
 
 def remove_baseline(trials):
+    """
+    This methods removes the baseline from all the record.
+    The baseline is the mean in the before_stim time.
+    :return: trials after baseline removal
+    """
     new_trials = []
     for trial in trials:
         new_trial=[]
         for stim in trial:
             new_stim = []
             for electrode in stim:
+                # get baseline for each stim in each trial
                 baseline = np.mean(electrode[0:before_stim])
+                # remove baseline
                 new_stim.append(electrode-baseline)
             new_trial.append(np.array(new_stim))
         new_trials.append(new_trial)
@@ -95,17 +108,28 @@ def remove_baseline(trials):
 
 
 def preprocess_data(path):
+    """
+    A general method
+    """
     raw_data, labels, targets, durations, trials = load_data(path)
     return general_preprocess(raw_data, durations, labels, targets)
 
 
 def general_preprocess(data, durations, labels, targets=None):
+    """
+    This method calls all the preprocess methods and return the data after all
+    the preprocess is done.
+    :return: trials after preprocess
+    """
+
+    # get epochs and filter the data
     raw_data = data[np.newaxis, ...]
     epochs = get_epochs_array(raw_data[:, 1:14, :])
     epochs.filter(l_freq=lowcut, h_freq=highcut, verbose=False)
 
     raw_data[:, 1:14, :] = epochs.get_data()
 
+    # get trials and remove the baseline
     trials = split_data(raw_data.squeeze(0), ch_channels, durations)
     baseline_trials = remove_baseline(trials)
     trials = reshape_trails(baseline_trials)
@@ -116,6 +140,7 @@ def general_preprocess(data, durations, labels, targets=None):
 def get_mean_of_stims(data, labels, targets):
     """
     Calculate mean for every type of stimulus
+    @:return mean arrays for idle, labels and targets
     """
     mean_target_data, mean_distract_data, mean_idle_data = [], [], []
 
@@ -142,6 +167,7 @@ def get_mean_of_stims(data, labels, targets):
 def down_sample(mean_data, sample_rate):
     """
     Extract every n'th (=sample_rate) sample
+    @:return sampled array
     """
     sampled_data = []
     for trail in mean_data:

@@ -1,6 +1,6 @@
-from bci4als_code.eeg import EEG
-from scripts.bci4als_code.experiments.offline import OfflineExperiment
-from main import load_data
+from scripts.eeg import EEG
+from scripts.experiments.offline import OfflineExperiment
+from helper import load_data
 import numpy as np
 from classifier import csp_lda
 import pickle
@@ -12,13 +12,14 @@ def offline_experiment():
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
 
-    eeg = EEG(board_id=CYTON_DAISY)
-    exp = OfflineExperiment(eeg=eeg, num_trials=5, stim_length=0.8, cue_length=1,
-                            full_screen=True, audio=False, num_stims=30)
+    # experiment
+    eeg = EEG(board_id=SYNTHETIC_BOARD)
+    exp = OfflineExperiment(eeg=eeg, num_trials=3, stim_length=0.8, cue_length=1, full_screen=True, num_stims=15)
 
     exp.run()
     time.sleep(1)
 
+    # analyze and train the model
     session_directory = exp.session_directory
     down_sample_target, down_sample_idle = load_data(session_directory, plot=False)
     targets, idles = [], []
