@@ -99,7 +99,6 @@ class OfflineExperiment(Experiment):
         # Params
         win = self.window_params['main_window']
         trial_img = self.enum_image[self.labels[trial_index][stim_index]]
-        audio_path = os.path.join(os.path.dirname(__file__), 'audio', '{}.mp3')
 
         # Draw and push marker
         self.eeg.insert_marker(status='start', label=self.labels[trial_index][stim_index], index=trial_index)

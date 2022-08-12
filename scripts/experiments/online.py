@@ -2,6 +2,7 @@ from scripts.eeg import EEG
 from scripts.experiments.offline import OfflineExperiment
 from psychopy import visual, event
 import sys
+import time
 
 
 class OnlineExperiment(OfflineExperiment):
@@ -52,6 +53,40 @@ class OnlineExperiment(OfflineExperiment):
             if 'escape' == self.get_keypress():
                 sys.exit(-1)
 
+    def _instructions(self):
+        """
+        this function present the instructions
+        """
+        win = self.window_params['main_window']
+        mouse_pos = event.Mouse()
+
+        # Init visuals
+        text_1 = "In the next trial you will need to choose which shape to concentrate on." \
+                 "You can choose the red square or the purple triangle."
+        # text_2 = "You can choose the red square or the purple triangle."
+        click_path = f"..\\scripts\\experiments\\images\\click_here.png"
+
+        next_message_1 = visual.TextStim(win, text_1, color='white', height=25, pos=(0, 150))
+        click_here = visual.ImageStim(win, click_path, pos=(0, -100), size=(230, 210))
+
+        next_message_1.draw()
+        click_here.draw()
+        win.flip()
+
+        # white for user response
+        while not mouse_pos.isPressedIn(click_here):
+            if mouse_pos.isPressedIn(click_here):
+                continue
+            # Halt if escape was pressed
+            if 'escape' == self.get_keypress():
+                sys.exit(-1)
+
+        # Show ready message
+        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color="white", height=50)
+        ready_message.draw()
+        win.flip()
+        time.sleep(self.ready_length)
+
     def run(self, use_eeg: bool = True, full_screen: bool = False):
         # Init the current experiment folder
         self.subject_directory = self._ask_subject_directory()
@@ -62,6 +97,8 @@ class OnlineExperiment(OfflineExperiment):
 
         # Init psychopy and screen params
         self._init_window()
+
+        self._instructions()
 
         # Start stream
         # initialize headset

@@ -97,91 +97,6 @@ class EEG:
         marker = self.encode_marker(status, label, index)  # encode marker
         self.board.insert_marker(marker)  # insert the marker to the stream
 
-    # def _numpy_to_df(self, board_data: NDArray):
-    #     """
-    #     gets a Brainflow-style matrix and returns a Pandas Dataframe
-    #     :param board_data: NDAarray retrieved from the board
-    #     :returns df: a dataframe with the data
-    #     """
-    #     # create dictionary of <col index,col name> for renaming DF
-    #     eeg_channels = self.board.get_eeg_channels(self.board_id)
-    #     eeg_names = self.board.get_eeg_names(self.board_id)
-    #     timestamp_channel = self.board.get_timestamp_channel(self.board_id)
-    #     acceleration_channels = self.board.get_accel_channels(self.board_id)
-    #     marker_channel = self.board.get_marker_channel(self.board_id)
-    #
-    #     column_names = {}
-    #     column_names.update(zip(eeg_channels, eeg_names))
-    #     column_names.update(zip(acceleration_channels, ['X', 'Y', 'Z']))
-    #     column_names.update({timestamp_channel: "timestamp",
-    #                          marker_channel: "marker"})
-    #
-    #     df = pd.DataFrame(board_data.T)
-    #     df.rename(columns=column_names)
-    #
-    #     # drop unused channels
-    #     df = df[column_names]
-    #
-    #     # decode int markers
-    #     df['marker'] = df['marker'].apply(self.decode_marker)
-    #     df[['marker_status', 'marker_label', 'marker_index']] = pd.DataFrame(df['marker'].tolist(), index=df.index)
-    #     return df
-
-    # def _board_to_mne(self, board_data: NDArray, ch_names: List[str]) -> mne.io.RawArray:
-    #     """
-    #     Convert the ndarray board data to mne object
-    #     :param board_data: raw ndarray from board
-    #     :return:
-    #     """
-    #     eeg_data = board_data / 1e6  # BrainFlow returns uV, convert to V for MNE
-    #
-    #     # Creating MNE objects from BrainFlow data arrays
-    #     ch_types = ['eeg'] * len(board_data)
-    #     info = mne.create_info(ch_names=ch_names, sfreq=self.sfreq, ch_types=ch_types)
-    #     raw = mne.io.RawArray(eeg_data, info, verbose=False)
-    #
-    #     return raw
-    #
-    # def get_raw_data(self, ch_names: List[str]) -> mne.io.RawArray:
-    #     """
-    #     The method returns dataframe with all the raw data, and empties the buffer
-    #
-    #     :param ch_names: list[str] of channels to select
-    #     :return: mne_raw data
-    #     """
-    #
-    #     indices = [self.eeg_names.index(ch) for ch in ch_names]
-    #
-    #     data = self.board.get_board_data()[indices]
-    #
-    #     return self._board_to_mne(data, ch_names)
-    #
-    # def get_features(self, channels: List[str], selected_funcs: List[str],
-    #                  notch: float = 50, low_pass: float = 4, high_pass: float = 50) -> NDArray:
-    #     """
-    #     Returns features of all data since last call to get_board_data method.
-    #     :return features: NDArray of shape (1, n_features)
-    #     """
-    #
-    #     # Get the raw data
-    #     data = self.get_raw_data(ch_names=channels)
-    #
-    #     # Filter
-    #     data = self.filter_data(data, notch, low_pass, high_pass)
-    #
-    #     # Extract features
-    #     features = extract_features(data.get_data()[np.newaxis], self.sfreq,
-    #                                 selected_funcs,
-    #                                 {'pow_freq_bands__freq_bands': np.array([8, 10, 12.5, 30])})
-    #
-    #     return features
-
-    # def clear_board(self):
-    #     """Clear all data from the EEG board"""
-    #
-    #     # Get the data and don't save it
-    #     self.board.get_board_data()
-
     def get_board_data(self) -> NDArray:
         """The method returns the data from board and remove it"""
         return self.board.get_board_data()
@@ -200,10 +115,6 @@ class EEG:
         else:
             return self.board.get_eeg_channels(self.board_id)
 
-    # def get_channels_data(self):
-    #     """Get NDArray only with the channels data (without all the markers and other stuff)"""
-    #     return self.board.get_board_data()[self.get_board_channels()]
-
     def find_serial_port(self) -> str:
         """
         Return the string of the serial port to which the FTDI dongle is connected.
@@ -221,16 +132,6 @@ class EEG:
             if len(FTDIlist) < 1:
                 raise LookupError("FTDI-manufactured device not found. Please check the dongle is connected")
             return FTDIlist[0].name
-
-    # @staticmethod
-    # def filter_data(data: mne.io.RawArray,
-    #                 notch: float, low_pass: float, high_pass: float) -> mne.io.RawArray:
-    #
-    #     # data.notch_filter(freqs=notch, verbose=False)
-    #     data.filter(l_freq=low_pass, h_freq=high_pass, verbose=False)
-    #
-    #     return data
-    #
 
     @staticmethod
     def encode_marker(status: str, label: int, index: int):

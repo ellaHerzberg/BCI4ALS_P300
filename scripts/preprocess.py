@@ -10,6 +10,7 @@ ch_names = ['C3', 'C4', 'Cz', 'FC1', 'FC2', 'FC5', 'FC6', 'CP1', 'CP2', 'CP5', '
 before_stim = int(0.2*75)
 sample_rate = 10
 
+
 def load_data(path):
     #  get data from files
     with open(path + "\\raw_data.pickle", "rb") as f:

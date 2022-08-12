@@ -1,0 +1,27 @@
+Experiment datetime: 2022-07-28 16:46:30.846655
+
+EEG Channels:
+*************
+Channel 1: C3
+Channel 2: C4
+Channel 3: Cz
+Channel 4: FC1
+Channel 5: FC2
+Channel 6: FC5
+Channel 7: FC6
+Channel 8: CP1
+Channel 9: CP2
+Channel 10: CP5
+Channel 11: CP6
+Channel 12: O1
+Channel 13: O2
+
+Experiment Data
+***************
+Experiment Type: Online
+Num of trials: 1
+Num of stimulus per trail: 20
+Single trial length: 16.0
+Cue length: 0.25
+Stim length: 0.8
+Labels Enum: {0: 'target_1', 1: 'target_2', 2: 'idle'}
