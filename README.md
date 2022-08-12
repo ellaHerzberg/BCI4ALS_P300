@@ -27,5 +27,13 @@ pip install -r requirements.txt
  ## How to Use
  On the first time run offline_experiment which records the brain activity and saves the CSP-LDA trained model.  
  The next trials should be to the user choice, whether running more offline trainings or an online training which implements [incremental learning](https://en.wikipedia.org/wiki/Incremental_learning).
- 
- 
+ When an online training starts, the user will be asked to choose the target:
+<p float="left">
+  <img src="./figs/start.JPG" width="400" height="250" />
+</p>
+At the end of the trial, the user needs to click on the target:
+<p float="left">
+  <img src="./figs/end.JPG" width="400" height="250" />
+</p>
+
+
