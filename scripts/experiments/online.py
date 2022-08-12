@@ -53,39 +53,23 @@ class OnlineExperiment(OfflineExperiment):
             if 'escape' == self.get_keypress():
                 sys.exit(-1)
 
-    def _instructions(self):
-        """
-        this function present the instructions
-        """
+    def _start_message(self):
+        self._init_window()
         win = self.window_params['main_window']
-        mouse_pos = event.Mouse()
 
-        # Init visuals
-        text_1 = "In the next trial you will need to choose which shape to concentrate on." \
-                 "You can choose the red square or the purple triangle."
-        # text_2 = "You can choose the red square or the purple triangle."
-        click_path = f"..\\scripts\\experiments\\images\\click_here.png"
-
-        next_message_1 = visual.TextStim(win, text_1, color='white', height=25, pos=(0, 150))
-        click_here = visual.ImageStim(win, click_path, pos=(0, -100), size=(230, 210))
-
-        next_message_1.draw()
-        click_here.draw()
+        # init visuals
+        target_1 = visual.ImageStim(win, self.images_path[self.enum_image[0]], pos=(180, -75),
+                                    size=(235, 200))
+        target_2 = visual.ImageStim(win, self.images_path[self.enum_image[1]], pos=(-180, -75),
+                                    size=(210, 210))
+        message = visual.TextStim(win, 'Please concentrate of one of the following images',
+                                  color='white', height=35, pos=(0, 150))
+        # show options
+        target_1.draw()
+        target_2.draw()
+        message.draw()
         win.flip()
-
-        # white for user response
-        while not mouse_pos.isPressedIn(click_here):
-            if mouse_pos.isPressedIn(click_here):
-                continue
-            # Halt if escape was pressed
-            if 'escape' == self.get_keypress():
-                sys.exit(-1)
-
-        # Show ready message
-        ready_message = visual.TextStim(win, 'Ready...', pos=[0, 0], color="white", height=50)
-        ready_message.draw()
-        win.flip()
-        time.sleep(self.ready_length)
+        time.sleep(5)
 
     def run(self, use_eeg: bool = True, full_screen: bool = False):
         # Init the current experiment folder
@@ -98,8 +82,6 @@ class OnlineExperiment(OfflineExperiment):
         # Init psychopy and screen params
         self._init_window()
 
-        self._instructions()
-
         # Start stream
         # initialize headset
         print("Turning EEG connection ON")
@@ -108,6 +90,7 @@ class OnlineExperiment(OfflineExperiment):
         print(f"Running {self.num_trials} trials")
         # Run trials
         # Messages for user
+        self._start_message()
         for s in range(self.num_stims):
             # Show stim on window
             self._show_stimulus(0, s)

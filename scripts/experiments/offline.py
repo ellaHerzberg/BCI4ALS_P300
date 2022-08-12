@@ -13,7 +13,7 @@ class OfflineExperiment(Experiment):
 
     def __init__(self, eeg: EEG, num_trials: int, stim_length: float=1,
                  next_length: float = 2, cue_length: float = 0.25, ready_length: float = 1,
-                 full_screen: bool = False, classes: tuple = (0, 1, 2),
+                 full_screen: bool = True, classes: tuple = (0, 1, 2),
                  num_stims=100):
 
         super().__init__(eeg, num_trials, classes, num_stims)
