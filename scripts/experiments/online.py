@@ -2,7 +2,7 @@ from scripts.eeg import EEG
 from scripts.experiments.offline import OfflineExperiment
 from psychopy import visual, event
 import sys
-
+import time
 
 class OnlineExperiment(OfflineExperiment):
 
@@ -52,6 +52,24 @@ class OnlineExperiment(OfflineExperiment):
             if 'escape' == self.get_keypress():
                 sys.exit(-1)
 
+    def _start_message(self):
+        self._init_window()
+        win = self.window_params['main_window']
+
+        # init visuals
+        target_1 = visual.ImageStim(win, self.images_path[self.enum_image[0]], pos=(180, -75),
+                                    size=(235, 200))
+        target_2 = visual.ImageStim(win, self.images_path[self.enum_image[1]], pos=(-180, -75),
+                                    size=(210, 210))
+        message = visual.TextStim(win, 'Please concentrate of one of the following images',
+                                  color='white', height=35, pos=(0, 150))
+        # show options
+        target_1.draw()
+        target_2.draw()
+        message.draw()
+        win.flip()
+        time.sleep(5)
+
     def run(self, use_eeg: bool = True, full_screen: bool = False):
         # Init the current experiment folder
         self.subject_directory = self._ask_subject_directory()
@@ -71,6 +89,7 @@ class OnlineExperiment(OfflineExperiment):
         print(f"Running {self.num_trials} trials")
         # Run trials
         # Messages for user
+        self._start_message()
         for s in range(self.num_stims):
             # Show stim on window
             self._show_stimulus(0, s)

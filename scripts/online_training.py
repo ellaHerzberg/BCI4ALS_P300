@@ -7,7 +7,7 @@ import os
 
 
 def _run_experiment(exp, model):
-    trials_before, data, durations, labels = exp.run(use_eeg=True, full_screen=False)
+    trials_before, data, durations, labels = exp.run(use_eeg=True, full_screen=True)
 
     # preprocess data
     trials, labels, targets = general_preprocess(data, durations, labels)
@@ -51,11 +51,11 @@ def run_experiment(model_path: str):
 
     SYNTHETIC_BOARD = -1
     CYTON_DAISY = 2
-    eeg = EEG(board_id=CYTON_DAISY)
-    exp = OnlineExperiment(eeg=eeg, num_trials=1, num_stims=65, stim_length=0.8)
+    eeg = EEG(board_id=SYNTHETIC_BOARD)
+    exp = OnlineExperiment(eeg=eeg, num_trials=1, num_stims=20, stim_length=0.8)
 
     idles, targets = [], []
-    for i in range(1, 6):  # run twice for accuracy
+    for i in range(1, 10):  # run twice for accuracy
         idle, target = _run_experiment(exp, model)
 
         idles.extend(idle)
@@ -72,5 +72,6 @@ def run_experiment(model_path: str):
 
 
 if __name__ == '__main__':
-    model_path = f"..\\recordings\\model\\model.pickle"
+    # model_path = f"..\\recordings\\model\\model.pickle"
+    model_path = f"..\\recordings\\Elad8.8\\1\\model.pickle"
     run_experiment(model_path=model_path)
